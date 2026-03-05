@@ -36,7 +36,7 @@ public class BookService {
         return repository.findByAvailable(available).stream().map(this::toResponse).toList();
     }
 
-    public List<BookResponseDTO> findByTitle(String title) {
+    public List<BookResponseDTO> findByTitleContainingIgnoreCase(String title) {
         return repository.findByTitleContainingIgnoreCase(title).stream().map(this::toResponse).toList();
     }
 
