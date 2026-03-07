@@ -10,20 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.api.biblioteca.book.dto.BookResponseDTO;
-import com.api.biblioteca.book.repository.BookRepository;
 import com.api.biblioteca.book.service.BookService;
-
-
-
-
 
 @RestController
 @RequestMapping("/book")
 public class BookController {
     private final BookService service;
 
-    public BookController(BookRepository repository) {
-        this.service = new BookService(repository);
+    public BookController(BookService service) {
+        this.service = service;
     }
 
     @GetMapping
@@ -64,17 +59,17 @@ public class BookController {
     @GetMapping("/search")
     public List<BookResponseDTO> searchTitleAvailable(@RequestParam(required=false) String title, @RequestParam(required=false) Boolean available) {
         
-            if(title != null && !title.isBlank() && available != null) {
-                List<BookResponseDTO> books = service.findByTitleContainingIgnoreCaseAndAvailable(title.trim(), available);
+        if(title != null && !title.isBlank() && available != null) {
+            List<BookResponseDTO> books = service.findByTitleContainingIgnoreCaseAndAvailable(title.trim(), available);
                 
-                if(books.isEmpty()) {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum livro encontrado com o título: " + title + " e disponibilidade: " + available);
-                }
-                
-                return books;
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Parâmetros 'title' e 'available' são obrigatórios para esta busca");
+            if(books.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum livro encontrado com o título: " + title + " e disponibilidade: " + available);
             }
+                
+            return books;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Parâmetros 'title' e 'available' são obrigatórios para esta busca");
         }
+    }
     
 }

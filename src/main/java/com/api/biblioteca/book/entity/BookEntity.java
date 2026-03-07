@@ -5,6 +5,7 @@ import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.Setter;
 public class BookEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.UUID)
     private UUID id;
 
     @Column(name = "title", nullable = false)
@@ -28,7 +29,7 @@ public class BookEntity {
     @Column(name = "author", nullable = false)
     private String author;
 
-    @Column(name = "year", nullable = false, unique = true)
+    @Column(name = "year", nullable = false)
     private Integer year;
 
     @Column(name = "available", nullable = false)

@@ -1,5 +1,7 @@
 package com.api.biblioteca.client.model.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,10 @@ public class ClientService {
         client.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         return repository.save(client);
+    }
+
+    public List<ClientEntity> findAll() {
+        return repository.findAll();
     }
 
 }

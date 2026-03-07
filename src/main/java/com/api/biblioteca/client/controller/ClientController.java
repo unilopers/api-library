@@ -1,6 +1,9 @@
 package com.api.biblioteca.client.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +15,7 @@ import com.api.biblioteca.client.model.entity.ClientEntity;
 import com.api.biblioteca.client.model.service.ClientService;
 
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/client")
@@ -40,5 +44,11 @@ public class ClientController {
             return ResponseEntity.status(500).body("Error creating client");
         }
     }
+
+    @GetMapping
+    public List<ClientEntity> AllClients() {
+        return service.findAll();
+    }
+    
 
 }
