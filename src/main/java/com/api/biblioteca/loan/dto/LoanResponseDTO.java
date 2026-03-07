@@ -12,5 +12,6 @@ public class LoanResponseDTO {
     private UUID bookId;
     private LocalDateTime loanDate;
     private LocalDateTime returnDate;
+    private LocalDateTime estipulatedReturnDate;
 
 }

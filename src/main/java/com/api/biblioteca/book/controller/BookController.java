@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.api.biblioteca.book.dto.BookResponseDTO;
-import com.api.biblioteca.book.repository.BookRepository;
 import com.api.biblioteca.book.service.BookService;
 
 @RestController
@@ -18,8 +17,8 @@ import com.api.biblioteca.book.service.BookService;
 public class BookController {
     private final BookService service;
 
-    public BookController(BookRepository repository) {
-        this.service = new BookService(repository);
+    public BookController(BookService service) {
+        this.service = service;
     }
 
     @GetMapping

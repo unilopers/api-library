@@ -34,4 +34,6 @@ public class LoanEntity {
     private LocalDateTime loanDate;
 
     private LocalDateTime returnDate;
+    
+    private LocalDateTime estipulatedReturnDate;
 }

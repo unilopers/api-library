@@ -75,6 +75,7 @@ public class LoanService {
         loan.setClient(client);
         loan.setBook(book);
         loan.setLoanDate(LocalDateTime.now());
+        loan.setEstipulatedReturnDate(LocalDateTime.now().plusDays(7));
         loan.setReturnDate(null);
 
         book.setAvailable(false);
@@ -127,6 +128,7 @@ public class LoanService {
         dto.setClientId(loan.getClient().getId());
         dto.setBookId(loan.getBook().getId());
         dto.setLoanDate(loan.getLoanDate());
+        dto.setEstipulatedReturnDate(loan.getEstipulatedReturnDate());
         dto.setReturnDate(loan.getReturnDate());
         return dto;
     }
