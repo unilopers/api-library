@@ -12,6 +12,14 @@ import org.springframework.web.server.ResponseStatusException;
 import com.api.biblioteca.book.dto.BookResponseDTO;
 import com.api.biblioteca.book.service.BookService;
 
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.api.biblioteca.book.dto.BookRequestDTO;
+
+
 @RestController
 @RequestMapping("/book")
 public class BookController {
@@ -20,6 +28,13 @@ public class BookController {
     public BookController(BookService service) {
         this.service = service;
     }
+
+    @PostMapping("/create")
+    public BookResponseDTO post(@Valid @RequestBody BookRequestDTO bookRequestDTO) {
+        BookResponseDTO createdBook = service.create(bookRequestDTO);
+        return createdBook;
+    }
+    
 
     @GetMapping
     public List<BookResponseDTO> getAll() {
