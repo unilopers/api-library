@@ -34,32 +34,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        // Lê o header Authorization enviado na requisição.
+        //Lê o header Authorization enviado na requisição.
         String authHeader = request.getHeader(AUTH_HEADER);
 
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
-            // Remove o prefixo "Bearer " para obter apenas o token JWT.
+            //Remove o prefixo "Bearer " para obter apenas o token JWT.
             String token = authHeader.substring(BEARER_PREFIX.length());
 
             try {
                 if (tokenService.isTokenValid(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    // Extrai o usuário (subject) definido no token.
+                    //Extrai o usuário definido no token.
                     String subject = tokenService.extractSubject(token);
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(subject, null, Collections.emptyList());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // Registra a autenticação no contexto do Spring Security.
+                    //Registra a autenticação no contexto do Spring Security.
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception ex) {
-                // Token inválido/malformado: segue sem autenticar a requisição.
+                //Token inválido/malformado: segue sem autenticar a requisição.
                 SecurityContextHolder.clearContext();
             }
         }
 
-        // Continua a cadeia de filtros independentemente do resultado da autenticação.
+        //Continua a cadeia de filtros independentemente do resultado da autenticação.
         filterChain.doFilter(request, response);
     }
 }

@@ -23,11 +23,11 @@ public class TokenService {
     private long expirationMs;
 
     public String generateToken(String subject) {
-        // Define instante atual e data de expiração do token.
+        //Define instante atual e data de expiração do token.
         Instant now = Instant.now();
         Instant expiration = now.plusMillis(expirationMs);
 
-        // Gera o JWT assinado com subject, emissão e expiração.
+        //Gera o JWT assinado com subject, emissão e expiração.
         return Jwts.builder()
                 .subject(subject)
                 .issuedAt(Date.from(now))
@@ -37,7 +37,7 @@ public class TokenService {
     }
 
     public String extractSubject(String token) {
-        // Valida assinatura e extrai o subject do payload.
+        //Valida assinatura e extrai o subject do payload.
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -48,17 +48,17 @@ public class TokenService {
 
     public boolean isTokenValid(String token) {
         try {
-            // Se conseguir extrair o subject, considera o token válido.
+            //Se conseguir extrair o subject, considera o token válido.
             extractSubject(token);
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
-            // Qualquer erro de parse/assinatura/expiração invalida o token.
+            //Qualquer erro de parse/assinatura/expiração invalida o token.
             return false;
         }
     }
 
     private SecretKey getSigningKey() {
-        // Cria a chave HMAC a partir do secret configurado.
+        //Cria a chave HMAC a partir do secret configurado.
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 }
