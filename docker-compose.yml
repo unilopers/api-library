@@ -5,8 +5,8 @@ services:
     container_name: apilibrary
     image: postgres
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Tajetti08
+      POSTGRES_PASSWORD: 
       POSTGRES_DB: apilibrary

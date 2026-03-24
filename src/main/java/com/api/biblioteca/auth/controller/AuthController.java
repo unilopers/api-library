@@ -41,20 +41,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
-        // Normaliza email para evitar falhas por maiúsculas/espaços.
+        //Normaliza email para evitar falhas por maiúsculas/espaços.
         String normalizedEmail = request.getEmail().trim().toLowerCase();
 
-        // Busca o usuário e retorna 401 se não existir.
+        //Busca o usuário e retorna 401 se não existir.
         ClientEntity client = clientRepository.findByEmailIgnoreCase(normalizedEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas"));
 
-        // Compara a senha informada com o hash salvo no banco.
+        //Compara a senha informada com o hash salvo no banco.
         boolean passwordMatches = passwordEncoder.matches(request.getPassword(), client.getPassword());
         if (!passwordMatches) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
         }
 
-        // Gera o JWT e devolve no formato esperado pelo cliente.
+        //Gera o JWT e devolve no formato esperado pelo cliente.
         String token = tokenService.generateToken(client.getEmail());
         LoginResponseDTO response = new LoginResponseDTO(token, "Bearer", expirationMs);
 
