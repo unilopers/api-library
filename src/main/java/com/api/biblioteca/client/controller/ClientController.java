@@ -2,6 +2,7 @@ package com.api.biblioteca.client.controller;
 
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,16 +24,23 @@ import jakarta.validation.Valid;
 public class ClientController {
 
     private final ClientService service;
+    private final RabbitTemplate rabbitTemplate;
 
-    public ClientController(ClientService service) {
+    public ClientController(ClientService service, RabbitTemplate rabbitTemplate) {
         this.service = service;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @PostMapping
     public ResponseEntity<ClientResponseDTO> createClient(@Valid @RequestBody ClientRequestDTO dto) {
         try {
             ClientEntity saved = service.create(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
+            ClientResponseDTO response = toResponse(saved);
+
+            // Publica o email do cliente para processamento assíncrono pós-cadastro.
+            rabbitTemplate.convertAndSend("client.queue", response.getEmail());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
         }

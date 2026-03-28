@@ -2,6 +2,7 @@ package com.api.biblioteca.book.controller;
 
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +21,11 @@ import com.api.biblioteca.book.service.BookService;
 @RequestMapping("/book")
 public class BookController {
     private final BookService service;
+    private final RabbitTemplate rabbitTemplate;
 
-    public BookController(BookService service) {
+    public BookController(BookService service, RabbitTemplate rabbitTemplate) {
         this.service = service;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @PostMapping("/create")
@@ -36,6 +39,10 @@ public class BookController {
         }
 
         BookResponseDTO created = service.create(request);
+        
+        // Enviar para fila de processamento assíncrono
+        rabbitTemplate.convertAndSend("book.queue", created);
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
