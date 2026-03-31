@@ -4,7 +4,6 @@ from uuid import uuid4
 from locust import HttpUser, between, task
 
 class LoadTestUser(HttpUser):
-    host = "http://localhost:8080"
     wait_time = between(0.1, 0.4)
 
     def on_start(self):
@@ -12,7 +11,9 @@ class LoadTestUser(HttpUser):
         email = f"johndoe{unique}@example.com"
         password = "password123"
 
-        self.client.post(
+        self.client_id = None
+
+        create_client_response = self.client.post(
             "/client",
             json={
                 "name": f"John Doe {unique}",
@@ -22,6 +23,9 @@ class LoadTestUser(HttpUser):
             },
             name="POST /client",
         )
+
+        if create_client_response.status_code == 201:
+            self.client_id = create_client_response.json().get("id")
 
         login_response = self.client.post(
             "/auth/login",
@@ -70,4 +74,40 @@ class LoadTestUser(HttpUser):
             "/book",
             headers=self.auth_headers,
             name="GET /book",
+        )
+
+    @task(3)
+    def test_loan_book(self):
+        if not self.client_id:
+            return
+
+        unique = f"{int(time.time() * 1000)}-{uuid4().hex[:6]}"
+
+        create_book_response = self.client.post(
+            "/book/create",
+            headers=self.auth_headers,
+            json={
+                "title": f"Loan Book {unique}",
+                "author": "Load Test",
+                "year": 2026,
+                "available": True,
+            },
+            name="POST /book/create",
+        )
+
+        if create_book_response.status_code != 201:
+            return
+
+        book_id = create_book_response.json().get("id")
+        if not book_id:
+            return
+
+        self.client.post(
+            "/loan",
+            headers=self.auth_headers,
+            json={
+                "clientId": self.client_id,
+                "bookId": book_id,
+            },
+            name="POST /loan",
         )
